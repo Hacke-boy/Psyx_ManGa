@@ -1,60 +1,199 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psyx-Manga | Empire Edition 🔴⚫</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Psyx-Manga | Empire Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="loading-active">
+<body>
 
-    <div id="loader">
-        <div class="loader-content">
-            <div class="pulse-logo">PSYX</div>
-            <p>CHARGEMENT DE L'EMPIRE...</p>
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">PSYX</div>
+      <div class="loader-bar"><div class="loader-fill"></div></div>
+      <div class="loader-text">CHARGEMENT DE L'EMPIRE...</div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>🔴 NOUVEAU — One Piece Ch. 1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch. 267 &nbsp;🔴&nbsp; Berserk Ch. 374 &nbsp;⚫&nbsp; Chainsaw Man Ch. 168 &nbsp;🔴&nbsp; Vinland Saga Ch. 210 &nbsp;⚫&nbsp; Attack on Titan - COMPLET &nbsp;🔴&nbsp; Dragon Ball Super Ch. 103 &nbsp;⚫&nbsp;</span>
+      <span>🔴 NOUVEAU — One Piece Ch. 1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch. 267 &nbsp;🔴&nbsp; Berserk Ch. 374 &nbsp;⚫&nbsp; Chainsaw Man Ch. 168 &nbsp;🔴&nbsp; Vinland Saga Ch. 210 &nbsp;⚫&nbsp; Attack on Titan - COMPLET &nbsp;🔴&nbsp; Dragon Ball Super Ch. 103 &nbsp;⚫&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-left">
+      <div class="logo">PSYX<span>MANGA</span></div>
+    </div>
+    <div class="nav-center">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Rechercher un manga..." autocomplete="off"/>
+        <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="coins-display" id="coinsDisplay">
+        <span class="coin-icon">🪙</span>
+        <span id="coinCount">0</span>
+      </div>
+      <button class="btn-login" id="btnOpenAuth">CONNEXION</button>
+      <div class="user-menu hidden" id="userMenu">
+        <span id="userGreeting">Salut !</span>
+        <button class="btn-logout" id="btnLogout">⏻</button>
+      </div>
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav hidden" id="mobileNav">
+    <div class="search-wrap">
+      <input type="text" id="searchMobile" placeholder="Rechercher..." autocomplete="off"/>
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <div class="mobile-links">
+      <a href="#" data-filter="all" class="mobile-link active">Tous</a>
+      <a href="#" data-filter="shonen" class="mobile-link">Shonen</a>
+      <a href="#" data-filter="seinen" class="mobile-link">Seinen</a>
+      <a href="#" data-filter="shojo" class="mobile-link">Shojo</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">EMPIRE EDITION</div>
+      <h1 class="hero-title">LISEZ.<br>SANS<br>LIMITES.</h1>
+      <p class="hero-sub">Des milliers de chapitres.<br>Gratuit. Instantané.</p>
+      <button class="btn-hero" onclick="document.getElementById('library').scrollIntoView({behavior:'smooth'})">
+        EXPLORER L'EMPIRE →
+      </button>
+    </div>
+    <div class="hero-deco">
+      <div class="deco-text">漫画</div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- FILTERS -->
+    <div class="filters-bar" id="library">
+      <div class="filters-inner">
+        <div class="filters-left">
+          <button class="filter-btn active" data-filter="all">Tous</button>
+          <button class="filter-btn" data-filter="shonen">Shonen</button>
+          <button class="filter-btn" data-filter="seinen">Seinen</button>
+          <button class="filter-btn" data-filter="shojo">Shojo</button>
         </div>
+        <div class="sort-wrap">
+          <select id="sortSelect">
+            <option value="popular">Populaires</option>
+            <option value="recent">Récents</option>
+            <option value="az">A → Z</option>
+          </select>
+        </div>
+      </div>
     </div>
 
-    <nav class="ortega-nav">
-        <div class="logo">PSYX<span>MANGA</span></div>
-        <div class="nav-right">
-            <span id="admin-stat">🪙 <b id="admin-coins">0</b></span>
-            <button id="auth-btn" onclick="toggleAuth()"><i class="fas fa-user-circle"></i> Connexion</button>
-        </div>
-    </nav>
-
-    <section id="user-dashboard" class="glass" style="display:none;">
-        <div class="user-info">
-            <h4>Bienvenue, <span id="display-username">Empire User</span> !</h4>
-            <button onclick="logout()" class="logout-btn">Déconnexion</button>
-        </div>
-        <div class="history-container">
-            <h5><i class="fas fa-history"></i> Ton Historique</h5>
-            <div id="user-history" class="history-list"></div>
-        </div>
+    <!-- SECTION: TRENDING -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="accent">▮</span> EN TENDANCE</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="manga-grid" id="trendingGrid"></div>
     </section>
 
-    <div class="filter-bar glass">
-        <button class="tag active" onclick="filter('all')">Tous</button>
-        <button class="tag" onclick="filter('shonen')">Shonen</button>
-        <button class="tag" onclick="filter('seinen')">Seinen</button>
+    <!-- SECTION: ALL MANGA -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="accent">▮</span> BIBLIOTHÈQUE</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="manga-grid" id="mainGrid"></div>
+      <div class="no-results hidden" id="noResults">
+        <div class="no-results-icon">⛩</div>
+        <p>Aucun manga trouvé.</p>
+      </div>
+    </section>
+
+    <!-- HISTORY SECTION -->
+    <section class="section" id="historySection" style="display:none">
+      <div class="section-header">
+        <h2 class="section-title"><span class="accent">▮</span> TON HISTORIQUE</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="manga-grid" id="historyGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">PSYX<span>MANGA</span></div>
+      <p class="footer-copy">© 2025 Psyx-Manga Empire Edition. Tous droits réservés.</p>
+      <p class="footer-disclaimer">Ce site est à but éducatif. Supportez les auteurs officiels.</p>
     </div>
+  </footer>
 
-    <main id="manga-container" class="manga-grid">
-        </main>
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay hidden" id="authModal">
+    <div class="modal">
+      <button class="modal-close" id="closeModal">✕</button>
+      <div class="modal-tabs">
+        <button class="tab-btn active" data-tab="login">CONNEXION</button>
+        <button class="tab-btn" data-tab="register">S'INSCRIRE</button>
+      </div>
 
-    <div id="auth-modal" class="modal">
-        <div class="modal-content glass">
-            <h3>REJOINDRE L'EMPIRE</h3>
-            <input type="text" id="login-user" placeholder="Nom d'utilisateur">
-            <input type="password" id="login-pass" placeholder="Mot de passe">
-            <button class="confirm-btn" onclick="login()">SE CONNECTER</button>
-            <button class="close-btn" onclick="toggleAuth()">ANNULER</button>
+      <div class="tab-content" id="loginTab">
+        <div class="form-group">
+          <label>Pseudo</label>
+          <input type="text" id="loginUser" placeholder="Ton pseudo..." />
         </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="loginPass" placeholder="••••••••" />
+        </div>
+        <button class="btn-submit" id="btnLogin">SE CONNECTER</button>
+      </div>
+
+      <div class="tab-content hidden" id="registerTab">
+        <div class="form-group">
+          <label>Pseudo</label>
+          <input type="text" id="regUser" placeholder="Choisis un pseudo..." />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="regPass" placeholder="••••••••" />
+        </div>
+        <button class="btn-submit" id="btnRegister">REJOINDRE L'EMPIRE</button>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- MANGA DETAIL MODAL -->
+  <div class="modal-overlay hidden" id="detailModal">
+    <div class="modal modal-detail">
+      <button class="modal-close" id="closeDetail">✕</button>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="app.js"></script>
 </body>
-</html>
-
+    </html>
