@@ -4,14 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Psyx-Manga | Lire n'est que beauté</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+  <script>
+    /* FIX LOADER - s'execute immediatement, avant tout */
+    (function() {
+      function killLoader() {
+        var l = document.getElementById('loader');
+        if (l) { l.style.display = 'none'; }
+      }
+      setTimeout(killLoader, 2500);
+      document.addEventListener('DOMContentLoaded', function() { setTimeout(killLoader, 1800); });
+      window.addEventListener('load', function() { setTimeout(killLoader, 300); });
+    })();
+  </script>
 </head>
 <body>
 
-<!-- LOADER -->
 <div id="loader">
   <div class="loader-box">
     <div class="loader-logo">PSYX</div>
@@ -20,38 +30,31 @@
   </div>
 </div>
 
-<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker">
-    <span>📖 One Piece Ch.1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch.267 &nbsp;🔴&nbsp; Solo Leveling – COMPLET &nbsp;⚫&nbsp; Chainsaw Man Ch.168 &nbsp;🔴&nbsp; Demon Slayer – COMPLET &nbsp;⚫&nbsp; Dragon Ball Super Ch.103 &nbsp;🔴&nbsp; Livraison Port-au-Prince en 24h &nbsp;⚫&nbsp; Posters & Figurines disponibles &nbsp;🔴&nbsp;</span>
-    <span>📖 One Piece Ch.1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch.267 &nbsp;🔴&nbsp; Solo Leveling – COMPLET &nbsp;⚫&nbsp; Chainsaw Man Ch.168 &nbsp;🔴&nbsp; Demon Slayer – COMPLET &nbsp;⚫&nbsp; Dragon Ball Super Ch.103 &nbsp;🔴&nbsp; Livraison Port-au-Prince en 24h &nbsp;⚫&nbsp; Posters & Figurines disponibles &nbsp;🔴&nbsp;</span>
+    <span>📖 One Piece Ch.1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch.267 &nbsp;🔴&nbsp; Solo Leveling COMPLET &nbsp;⚫&nbsp; Chainsaw Man Ch.168 &nbsp;🔴&nbsp; Livraison Port-au-Prince 24h &nbsp;⚫&nbsp; Posters et Figurines disponibles &nbsp;🔴&nbsp;</span>
+    <span>📖 One Piece Ch.1112 &nbsp;⚫&nbsp; Jujutsu Kaisen Ch.267 &nbsp;🔴&nbsp; Solo Leveling COMPLET &nbsp;⚫&nbsp; Chainsaw Man Ch.168 &nbsp;🔴&nbsp; Livraison Port-au-Prince 24h &nbsp;⚫&nbsp; Posters et Figurines disponibles &nbsp;🔴&nbsp;</span>
   </div>
 </div>
 
-<!-- NAVBAR -->
 <nav id="navbar">
   <div class="nav-logo" onclick="scrollTo({top:0,behavior:'smooth'})">PSYX<span>MANGA</span></div>
-
   <div class="nav-search">
     <input type="text" id="searchInput" placeholder="Rechercher…" autocomplete="off"/>
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   </div>
-
   <div class="nav-actions">
-    <div class="coins-pill" id="coinsDisplay">🪙 <span id="coinCount">0</span></div>
-    <button class="cart-btn" id="cartBtn" title="Panier">
-      🛒 <span class="cart-badge hidden" id="cartBadge">0</span>
-    </button>
+    <div class="coins-pill">🪙 <span id="coinCount">0</span></div>
+    <button class="cart-btn" id="cartBtn">🛒 <span class="cart-badge hidden" id="cartBadge">0</span></button>
     <button class="btn-red" id="btnOpenAuth">CONNEXION</button>
     <div class="user-pill hidden" id="userPill">
       <span id="userLabel">User</span>
-      <button id="btnLogout" title="Déconnexion">⏻</button>
+      <button id="btnLogout">⏻</button>
     </div>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
-<!-- MOBILE MENU -->
 <div class="mob-menu hidden" id="mobMenu">
   <input type="text" id="searchMob" placeholder="Rechercher…" autocomplete="off"/>
   <div class="mob-links">
@@ -62,7 +65,6 @@
   </div>
 </div>
 
-<!-- HERO -->
 <section class="hero" id="hero">
   <div class="hero-bg"></div>
   <div class="hero-body">
@@ -78,41 +80,23 @@
   <div class="hero-kanji">漫画</div>
 </section>
 
-<!-- TYPE TABS -->
 <div class="type-tabs" id="library">
   <div class="type-tabs-inner">
     <button class="type-tab active" data-type="all">Tout</button>
-    <button class="type-tab" data-type="anime">
-      <span class="tab-icon">🎬</span> Anime
-      <span class="tab-desc">Dessin animé japonais</span>
-    </button>
-    <button class="type-tab" data-type="manga">
-      <span class="tab-icon">📖</span> Manga
-      <span class="tab-desc">BD japonaise</span>
-    </button>
-    <button class="type-tab" data-type="manhwa">
-      <span class="tab-icon">🇰🇷</span> Manhwa
-      <span class="tab-desc">BD coréenne</span>
-    </button>
-    <button class="type-tab" data-type="manhua">
-      <span class="tab-icon">🇨🇳</span> Manhua
-      <span class="tab-desc">BD chinoise</span>
-    </button>
-    <button class="type-tab tab-18" data-type="hentai">
-      <span class="tab-icon">🔞</span> Hentai
-      <span class="tab-desc">Contenu adulte</span>
-    </button>
+    <button class="type-tab" data-type="anime"><span class="tab-icon">🎬</span> Anime <span class="tab-desc">Dessin animé japonais</span></button>
+    <button class="type-tab" data-type="manga"><span class="tab-icon">📖</span> Manga <span class="tab-desc">BD japonaise</span></button>
+    <button class="type-tab" data-type="manhwa"><span class="tab-icon">🇰🇷</span> Manhwa <span class="tab-desc">BD coréenne</span></button>
+    <button class="type-tab" data-type="manhua"><span class="tab-icon">🇨🇳</span> Manhua <span class="tab-desc">BD chinoise</span></button>
+    <button class="type-tab tab-18" data-type="hentai"><span class="tab-icon">🔞</span> Hentai <span class="tab-desc">Contenu adulte</span></button>
   </div>
 </div>
 
-<!-- GENRE FILTERS + SORT -->
 <div class="filters-row">
   <div class="genre-pills">
     <button class="genre-pill active" data-genre="all">Tous genres</button>
     <button class="genre-pill" data-genre="shonen">Shōnen 少年</button>
     <button class="genre-pill" data-genre="shojo">Shōjo 少女</button>
     <button class="genre-pill" data-genre="seinen">Seinen 青年</button>
-    <button class="genre-pill" data-genre="josei">Josei 女性</button>
     <button class="genre-pill" data-genre="action">Action</button>
     <button class="genre-pill" data-genre="romance">Romance</button>
     <button class="genre-pill" data-genre="fantasy">Fantasy</button>
@@ -125,33 +109,28 @@
   </select>
 </div>
 
-<!-- TRENDING -->
 <section class="section">
-  <div class="sec-head"><h2><span class="red">▮</span> EN TENDANCE</h2><div class="sec-line"></div></h2></div>
+  <div class="sec-head"><h2><span class="red">▮</span> EN TENDANCE</h2><div class="sec-line"></div></div>
   <div class="grid" id="trendGrid"></div>
 </section>
 
-<!-- MAIN GRID -->
 <section class="section">
-  <div class="sec-head"><h2><span class="red">▮</span> CATALOGUE</h2><div class="sec-line"></div></h2></div>
+  <div class="sec-head"><h2><span class="red">▮</span> CATALOGUE</h2><div class="sec-line"></div></div>
   <div class="grid" id="mainGrid"></div>
   <div class="no-res hidden" id="noRes">⛩ Aucun résultat trouvé.</div>
 </section>
 
-<!-- HISTORY -->
 <section class="section hidden" id="histSec">
   <div class="sec-head"><h2><span class="red">▮</span> TON HISTORIQUE</h2><div class="sec-line"></div></div>
   <div class="grid" id="histGrid"></div>
 </section>
 
-<!-- ═══════════════ BOUTIQUE ═══════════════ -->
 <section class="section shop-section" id="shop">
   <div class="sec-head"><h2><span class="red">▮</span> BOUTIQUE — POSTERS & FIGURINES</h2><div class="sec-line"></div></div>
   <p class="shop-intro">🇭🇹 Unique en Haïti ! Commandez vos posters et figurines préférés, livrés chez vous à Port-au-Prince en 24h.</p>
   <div class="shop-grid" id="shopGrid"></div>
 </section>
 
-<!-- ═══════════════ CONTACT ═══════════════ -->
 <section class="section contact-section" id="contact">
   <div class="sec-head"><h2><span class="red">▮</span> CONTACT</h2><div class="sec-line"></div></div>
   <div class="contact-grid">
@@ -162,7 +141,7 @@
           <span class="ci-icon">📱</span>
           <div><div class="ci-label">WhatsApp</div><div class="ci-val">+509 3514 4295</div></div>
         </a>
-        <a class="contact-link" href="mailto:ldorce30@gmail.com" target="_blank">
+        <a class="contact-link" href="mailto:ldorce30@gmail.com">
           <span class="ci-icon">✉️</span>
           <div><div class="ci-label">Email</div><div class="ci-val">ldorce30@gmail.com</div></div>
         </a>
@@ -193,7 +172,6 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="foot-logo">PSYX<span>MANGA</span></div>
   <p class="foot-slogan">"Lire n'est que beauté"</p>
@@ -206,10 +184,10 @@
   <p class="foot-copy">© 2025 Psyx-Manga Empire Edition · Haïti · Tous droits réservés</p>
 </footer>
 
-<!-- ═══ MODAL: AUTH ═══ -->
+<!-- MODAL AUTH -->
 <div class="overlay hidden" id="authOverlay">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal('authOverlay')">✕</button>
+    <button class="modal-x" onclick="document.getElementById('authOverlay').classList.add('hidden')">✕</button>
     <div class="modal-tabs">
       <button class="mtab active" data-tab="login">CONNEXION</button>
       <button class="mtab" data-tab="register">S'INSCRIRE</button>
@@ -227,37 +205,35 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: DETAIL ═══ -->
+<!-- MODAL DETAIL -->
 <div class="overlay hidden" id="detailOverlay">
   <div class="modal modal-lg">
-    <button class="modal-x" onclick="closeModal('detailOverlay')">✕</button>
+    <button class="modal-x" onclick="document.getElementById('detailOverlay').classList.add('hidden')">✕</button>
     <div id="detailContent"></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: READER ═══ -->
+<!-- MODAL READER -->
 <div class="overlay hidden reader-overlay" id="readerOverlay">
   <div class="reader-wrap">
     <div class="reader-top">
       <span id="readerTitle">Titre</span>
       <span id="readerChap">Chapitre 1</span>
-      <button class="modal-x" onclick="closeModal('readerOverlay')">✕</button>
+      <button class="modal-x" onclick="document.getElementById('readerOverlay').classList.add('hidden')">✕</button>
     </div>
     <div class="reader-body">
-      <button class="reader-nav" id="rPrev">‹</button>
+      <button class="reader-nav" id="rPrev">&#8249;</button>
       <div class="reader-page-wrap" id="readerPage"></div>
-      <button class="reader-nav" id="rNext">›</button>
+      <button class="reader-nav" id="rNext">&#8250;</button>
     </div>
-    <div class="reader-bottom">
-      <span id="pageInfo">Page 1 / 20</span>
-    </div>
+    <div class="reader-bottom"><span id="pageInfo">Page 1 / 20</span></div>
   </div>
 </div>
 
-<!-- ═══ MODAL: CART ═══ -->
+<!-- MODAL CART -->
 <div class="overlay hidden" id="cartOverlay">
   <div class="modal modal-cart">
-    <button class="modal-x" onclick="closeModal('cartOverlay')">✕</button>
+    <button class="modal-x" onclick="document.getElementById('cartOverlay').classList.add('hidden')">✕</button>
     <h2 class="modal-title">🛒 Mon Panier</h2>
     <div id="cartItems"></div>
     <div class="cart-total" id="cartTotal"></div>
@@ -266,20 +242,14 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: ORDER ═══ -->
+<!-- MODAL ORDER -->
 <div class="overlay hidden" id="orderOverlay">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal('orderOverlay')">✕</button>
+    <button class="modal-x" onclick="document.getElementById('orderOverlay').classList.add('hidden')">✕</button>
     <h2 class="modal-title">📦 Infos de livraison</h2>
     <div class="form-g"><label>Nom complet</label><input type="text" id="oName" placeholder="Prénom Nom…"/></div>
-    <div class="form-g">
-      <label>📱 WhatsApp</label>
-      <input type="tel" id="oPhone" placeholder="+509 3XXX XXXX"/>
-    </div>
-    <div class="form-g">
-      <label>📍 Adresse de livraison</label>
-      <textarea id="oAddr" rows="2" placeholder="Rue, Quartier, Ville…"></textarea>
-    </div>
+    <div class="form-g"><label>📱 WhatsApp</label><input type="tel" id="oPhone" placeholder="+509 3XXX XXXX"/></div>
+    <div class="form-g"><label>📍 Adresse</label><textarea id="oAddr" rows="2" placeholder="Rue, Quartier, Ville…"></textarea></div>
     <div class="form-g">
       <label>💳 Mode de paiement</label>
       <div class="pay-options">
@@ -293,19 +263,19 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: 18+ GATE ═══ -->
+<!-- MODAL 18+ -->
 <div class="overlay hidden" id="ageOverlay">
   <div class="modal" style="text-align:center">
+    <button class="modal-x" onclick="document.getElementById('ageOverlay').classList.add('hidden')">✕</button>
     <div style="font-size:3rem;margin-bottom:1rem">🔞</div>
     <h2 class="modal-title">Contenu Adulte</h2>
-    <p style="color:#aaa;font-size:.9rem;margin-bottom:1.5rem">Cette section contient du contenu réservé aux adultes (+18 ans).<br>Disponible sur demande privée uniquement.</p>
-    <a class="btn-red-lg" href="https://wa.me/50935144295?text=Bonjour%2C+je+voudrais+acc%C3%A9der+au+contenu+adulte+sur+Psyx-Manga." target="_blank">📱 CONTACTER SUR WHATSAPP</a>
+    <p style="color:#aaa;font-size:.9rem;margin-bottom:1.5rem">Contenu réservé aux adultes (+18 ans).<br>Disponible sur demande privée uniquement.</p>
+    <a class="btn-red-lg" href="https://wa.me/50935144295?text=Bonjour%2C+je+voudrais+acceder+au+contenu+adulte+Psyx-Manga." target="_blank">📱 CONTACTER SUR WHATSAPP</a>
     <br><br>
-    <button class="btn-outline" onclick="closeModal('ageOverlay')">Annuler</button>
+    <button class="btn-outline" onclick="document.getElementById('ageOverlay').classList.add('hidden')">Annuler</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast hidden" id="toast"></div>
 
 <script src="app.js"></script>
