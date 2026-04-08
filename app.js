@@ -100,19 +100,32 @@ const coverCache = {};
 // ═══════════════════════════════════
 //  INIT
 // ═══════════════════════════════════
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('gone'), 2200);
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (loader) loader.classList.add('gone');
+}
+
+// Lance l'app dès que le DOM est prêt (plus fiable que 'load')
+document.addEventListener('DOMContentLoaded', () => {
   loadUser();
   loadCart();
   renderTrend();
   renderMain();
   renderShop();
   bindAll();
-  // Load covers asynchronously (staggered to respect rate limits)
+  // Covers chargées en arrière-plan
   CATALOG.filter(m => m.malId).forEach((m, i) => {
     setTimeout(() => fetchCover(m), i * 350);
   });
+  // Cache le loader après 2s
+  setTimeout(hideLoader, 2000);
 });
+
+// Filet de sécurité absolu : si 'load' se déclenche avant ou après, on cache quand même
+window.addEventListener('load', () => setTimeout(hideLoader, 500));
+
+// Dernier recours : forcer après 4s dans tous les cas
+setTimeout(hideLoader, 4000);
 
 // ═══════════════════════════════════
 //  COVER FETCH — Jikan API
@@ -285,12 +298,4 @@ function openDetail(manga, shopFocus = false) {
   const coverUrl = coverCache[manga.malId];
   const coverHTML = coverUrl
     ? `<img src="${coverUrl}" alt="${manga.title}" style="width:100%;height:100%;object-fit:cover"/>`
-    : `<div class="card-img-ph" style="background:linear-gradient(135deg,${manga.color1},${manga.color2});height:100%"><span>${manga.title}</span></div>`;
-
-  const chapCount = parseInt(manga.ep) || 20;
-  const chapList = Array.from({length: Math.min(10, chapCount)}, (_, i) => {
-    const num = chapCount - i;
-    const isNew = i < 2;
-    const age = i === 0 ? "Aujourd'hui" : i === 1 ? "Il y a 3j" : `Il y a ${i*6}j`;
-    return `<div class="chap-item" onclick="startReader(${manga.id},${num})">
-      <span cla
+    : `<div class="card-img-ph" style="background:linear-gradient(135deg,${manga.color1},${manga.color2});height:100%"
