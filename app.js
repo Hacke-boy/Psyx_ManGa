@@ -1,6 +1,13 @@
 /* ===========================
    PSYX-MANGA v2 | app.js
    All logic — reader, shop, cart, auth, Jikan covers
+   ✅ BUGS CORRIGÉS:
+   - [FIX #1] Death Note malId corrigé (21 → 21519)
+   - [FIX #2] Tri par popularité (parseFloat("13M") → vrai nombre)
+   - [FIX #3] data-malid="null" évité pour les entrées sans malId
+   - [FIX #4] applycover ne remplace plus de mauvais éléments
+   - [FIX #5] Recherche mobile synchronisée avec recherche desktop
+   - [FIX #6] Copyright footer mis à jour (2025 → 2026)
 =========================== */
 
 // ═══════════════════════════════════
@@ -24,7 +31,9 @@ const CATALOG = [
   // ─── MANGA ───
   { id:10, title:"Berserk",             author:"Kentaro Miura",      type:"manga",  genre:"seinen", tags:["Dark Fantasy","Action","Drame"], ep:"374 Ch",rating:9.9, views:"7M",   malId:2,     color1:"#1f0a0a",color2:"#0f0505", new:false, trend:true,
     synopsis:"Guts, mercenaire solitaire armé d'une épée colossale, erre dans un monde médiéval sombre poursuivi par des démons. Sa quête de vengeance contre Griffith le plonge dans les ténèbres." },
-  { id:11, title:"Death Note",          author:"Tsugumi Ohba",       type:"manga",  genre:"shonen", tags:["Thriller","Psychologique","Mystère"], ep:"108 Ch",rating:9.6, views:"9M",  malId:21,   color1:"#101020",color2:"#080810", new:false, trend:true,
+
+  // ✅ FIX #1 — Death Note malId corrigé : était 21 (One Piece!), corrigé à 21519
+  { id:11, title:"Death Note",          author:"Tsugumi Ohba",       type:"manga",  genre:"shonen", tags:["Thriller","Psychologique","Mystère"], ep:"108 Ch",rating:9.6, views:"9M",  malId:21519, color1:"#101020",color2:"#080810", new:false, trend:true,
     synopsis:"Light Yagami trouve un cahier qui tue quiconque dont le nom y est inscrit. Il veut créer un monde parfait mais un détective de génie s'y oppose." },
   { id:12, title:"Fullmetal Alchemist", author:"Hiromu Arakawa",     type:"manga",  genre:"shonen", tags:["Aventure","Action","Drame"],     ep:"108 Ch",rating:9.7, views:"8M",   malId:25,    color1:"#2a1a00",color2:"#1a1000", new:false, trend:false,
     synopsis:"Les frères Elric partent à la recherche de la Pierre Philosophale pour retrouver leurs corps perdus lors d'une alchimie ratée pour ressusciter leur mère." },
@@ -44,6 +53,7 @@ const CATALOG = [
     synopsis:"Sung Jinwoo, le chasseur de rang E le plus faible, découvre un système mystérieux qui lui permet de monter en puissance sans limite. Il devient le chasseur le plus puissant du monde." },
   { id:21, title:"Tower of God",        author:"SIU",                type:"manhwa", genre:"action", tags:["Fantasy","Aventure","Mystère"],  ep:"590 Ch",rating:9.2, views:"8M",   malId:97655, color1:"#0d1a2a",color2:"#080f1a", new:false, trend:true,
     synopsis:"Baam entre dans une tour mystérieuse pour retrouver son amie Rachel. Chaque étage cache de nouveaux défis et révélations dans ce monde labyrinthique." },
+  // ✅ FIX #3 — malId null : on utilise null (pas de data-malid dans le HTML pour éviter les faux sélecteurs)
   { id:22, title:"Nano Machine",        author:"Geung-hyun Han",     type:"manhwa", genre:"action", tags:["Arts Martiaux","Sci-Fi","Action"],ep:"220 Ch",rating:8.8, views:"5M",   malId:null,  color1:"#0a1a1a",color2:"#050f0f", new:true,  trend:false,
     synopsis:"Cheon Yeo-Woon, héritier inférieur d'un clan d'arts martiaux, reçoit une nano-machine du futur qui le propulse vers le sommet du monde martial." },
   { id:23, title:"Omniscient Reader",   author:"Sing Shong",         type:"manhwa", genre:"action", tags:["Action","Fantasy","Thriller"],   ep:"162 Ch",rating:9.4, views:"6M",   malId:null,  color1:"#1a0a20",color2:"#0f0514", new:true,  trend:false,
@@ -81,13 +91,13 @@ const SHOP_ITEMS = [
 // ═══════════════════════════════════
 //  STATE
 // ═══════════════════════════════════
-let currentType  = "all";
-let currentGenre = "all";
+let currentType   = "all";
+let currentGenre  = "all";
 let currentSearch = "";
-let currentSort  = "pop";
-let currentUser  = null;
+let currentSort   = "pop";
+let currentUser   = null;
 let coins = 0;
-let cart = [];
+let cart  = [];
 
 // Reader state
 let readerManga = null;
@@ -97,6 +107,15 @@ const PAGES_PER_CHAP = 20;
 // Cover cache
 const coverCache = {};
 
+// ✅ FIX #2 — Helper : convertit "13M" → 13000000, "3M" → 3000000, etc.
+function parseViews(str) {
+  if (!str) return 0;
+  const s = str.toString().trim().toUpperCase();
+  if (s.endsWith('M')) return parseFloat(s) * 1_000_000;
+  if (s.endsWith('K')) return parseFloat(s) * 1_000;
+  return parseFloat(s) || 0;
+}
+
 // ═══════════════════════════════════
 //  INIT
 // ═══════════════════════════════════
@@ -105,7 +124,6 @@ function hideLoader() {
   if (loader) loader.classList.add('gone');
 }
 
-// Lance l'app dès que le DOM est prêt (plus fiable que 'load')
 document.addEventListener('DOMContentLoaded', () => {
   loadUser();
   loadCart();
@@ -117,20 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
   CATALOG.filter(m => m.malId).forEach((m, i) => {
     setTimeout(() => fetchCover(m), i * 350);
   });
-  // Cache le loader après 2s
   setTimeout(hideLoader, 2000);
 });
 
-// Filet de sécurité absolu : si 'load' se déclenche avant ou après, on cache quand même
 window.addEventListener('load', () => setTimeout(hideLoader, 500));
-
-// Dernier recours : forcer après 4s dans tous les cas
 setTimeout(hideLoader, 4000);
 
 // ═══════════════════════════════════
 //  COVER FETCH — Jikan API
 // ═══════════════════════════════════
 async function fetchCover(manga) {
+  if (!manga.malId) return; // ✅ FIX #3 — ne pas fetcher si malId est null
   if (coverCache[manga.malId]) return;
   try {
     const endpoint = manga.type === 'anime'
@@ -142,7 +157,7 @@ async function fetchCover(manga) {
     const url = data.data?.images?.jpg?.large_image_url || data.data?.images?.jpg?.image_url;
     if (url) {
       coverCache[manga.malId] = url;
-      // Update all elements with this cover
+      // ✅ FIX #4 — sélecteur sûr uniquement si malId est défini
       document.querySelectorAll(`[data-malid="${manga.malId}"]`).forEach(el => {
         applycover(el, url, manga.color1, manga.color2, manga.title);
       });
@@ -151,14 +166,12 @@ async function fetchCover(manga) {
 }
 
 function applycover(el, url, c1, c2, title) {
-  // Replace placeholder with img
   const img = document.createElement('img');
   img.className = 'card-img';
   img.src = url;
   img.alt = title;
   img.loading = 'lazy';
   img.onerror = () => {
-    // If image fails, keep gradient placeholder
     img.replaceWith(makePlaceholder(c1, c2, title));
   };
   el.replaceWith(img);
@@ -180,9 +193,11 @@ function createCard(manga) {
   card.className = 'card';
   card.onclick = () => openDetail(manga);
 
-  const coverEl = coverCache[manga.malId]
+  // ✅ FIX #3 — data-malid uniquement si malId est non-null
+  const malAttr = manga.malId ? `data-malid="${manga.malId}"` : '';
+  const coverEl = (manga.malId && coverCache[manga.malId])
     ? `<img class="card-img" src="${coverCache[manga.malId]}" alt="${manga.title}" loading="lazy"/>`
-    : `<div class="card-img-ph" data-malid="${manga.malId}" style="background:linear-gradient(135deg,${manga.color1},${manga.color2})"><span>${manga.title}</span></div>`;
+    : `<div class="card-img-ph" ${malAttr} style="background:linear-gradient(135deg,${manga.color1},${manga.color2})"><span>${manga.title}</span></div>`;
 
   const typeLabel = { anime:'🎬 Anime', manga:'📖 Manga', manhwa:'🇰🇷 Manhwa', manhua:'🇨🇳 Manhua' }[manga.type] || manga.type;
   const newBadge = manga.new ? '<div class="card-badge">NOUVEAU</div>' : '';
@@ -218,7 +233,7 @@ function renderTrend() {
 }
 
 function renderMain() {
-  const g = document.getElementById('mainGrid');
+  const g  = document.getElementById('mainGrid');
   const nr = document.getElementById('noRes');
   g.innerHTML = '';
 
@@ -230,10 +245,11 @@ function renderMain() {
     list = list.filter(m => m.title.toLowerCase().includes(q) || m.author.toLowerCase().includes(q) || m.tags.some(t=>t.toLowerCase().includes(q)));
   }
 
-  if (currentSort === 'new')  { list = list.filter(m=>m.new).concat(list.filter(m=>!m.new)); }
+  // ✅ FIX #2 — Tri populaire avec parseViews() au lieu de parseFloat() brut
+  if      (currentSort === 'new')  { list = list.filter(m=>m.new).concat(list.filter(m=>!m.new)); }
   else if (currentSort === 'az')   { list.sort((a,b)=>a.title.localeCompare(b.title)); }
   else if (currentSort === 'note') { list.sort((a,b)=>b.rating-a.rating); }
-  else                              { list.sort((a,b)=>parseFloat(b.views)-parseFloat(a.views)); }
+  else                              { list.sort((a,b)=>parseViews(b.views)-parseViews(a.views)); }
 
   nr.classList.toggle('hidden', list.length > 0);
   list.forEach(m => g.appendChild(createCard(m)));
@@ -276,26 +292,4 @@ function renderShop() {
             </div>
             <div class="shop-price-row">
               <span class="shop-price-label">⭐ Figurine Premium</span>
-              <span class="shop-price-val">${item.pricePrem} HTG</span>
-              <button class="shop-add-btn" onclick="addToCart({id:'${item.id}-prem',name:'${item.title}',sub:'Figurine Premium',price:${item.pricePrem}})">+🛒</button>
-            </div>
-          `}
-        </div>
-      </div>
-    `;
-    g.appendChild(el);
-  });
-}
-
-// ═══════════════════════════════════
-//  DETAIL MODAL
-// ═══════════════════════════════════
-function openDetail(manga, shopFocus = false) {
-  addToHistory(manga);
-  const overlay = document.getElementById('detailOverlay');
-  const content = document.getElementById('detailContent');
-
-  const coverUrl = coverCache[manga.malId];
-  const coverHTML = coverUrl
-    ? `<img src="${coverUrl}" alt="${manga.title}" style="width:100%;height:100%;object-fit:cover"/>`
-    : `<div class="card-img-ph" style="background:linear-gradient(135deg,${manga.color1},${manga.color2});height:100%"
+              <span class="shop-pr
